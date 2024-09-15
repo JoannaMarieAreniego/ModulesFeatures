@@ -1,4 +1,3 @@
-//Module1/ExamScreen.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -23,46 +22,19 @@ class _ExamScreenState extends State<ExamScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Exam'),
+        backgroundColor: Colors.blueAccent,
+        iconTheme: IconThemeData(color: Colors.white),
+        title: Text('Lesson 1 Quiz'),
+        titleTextStyle: TextStyle(color: Colors.white, fontSize: 24),
       ),
-      body: Padding(
+      body: Container(
         padding: const EdgeInsets.all(16.0),
         child: _score == null
             ? ListView.builder(
                 itemCount: widget.examQuestions.length,
                 itemBuilder: (context, index) {
                   final question = widget.examQuestions[index];
-                  return Card(
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            question.examquestion ?? '',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 10),
-                          if (question.examoptions != null) ...[
-                            ...question.examoptions!.map(
-                              (option) => RadioListTile<String>(
-                                title: Text(option),
-                                value: option,
-                                groupValue: _answers[index],
-                                onChanged: (value) {
-                                  setState(() {
-                                    _answers[index] = value;
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  );
+                  return _buildQuestionCard(index, question);
                 },
               )
             : _buildAnswersView(),
@@ -70,63 +42,174 @@ class _ExamScreenState extends State<ExamScreen> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
-          onPressed: _score == null
-              ? _submitExam
-              : () {
-                  Navigator.pop(context); 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ModuleHomeScreen()),
-                  ); 
-                },
-          child: Text(_score == null ? 'Submit' : 'Close'),
+          onPressed: _score == null ? _submitExam : _closeExam,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blueAccent,
+            padding: EdgeInsets.symmetric(vertical: 15),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: Text(
+            _score == null ? 'Submit' : 'Close',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuestionCard(int index, ExamQuestions question) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      elevation: 3,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Question ${index + 1}/${widget.examQuestions.length}',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue.shade700,
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              question.examquestion ?? '',
+              style: TextStyle(fontSize: 18),
+            ),
+            SizedBox(height: 15),
+            Column(
+              children: question.examoptions!.map((option) {
+                final isSelected = _answers[index] == option;
+                final isCorrect = question.examanswer == option;
+                return Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(
+                      color: Colors.blueAccent, // Consistent border color
+                      width: 1,
+                    ),
+                    color: _showAnswers
+                        ? (isCorrect
+                            ? Colors.green.shade100
+                            : isSelected
+                                ? Colors.red.shade100
+                                : Colors.white)
+                        : Colors.white,
+                  ),
+                  child: RadioListTile<String>(
+                    activeColor: Colors.blue,
+                    title: Row(
+                      children: [
+                        Expanded(child: Text(option)),
+                        if (_showAnswers && isSelected)
+                          Icon(
+                            isCorrect ? Icons.check : Icons.close,
+                            color: isCorrect ? Colors.green : Colors.red,
+                          ),
+                      ],
+                    ),
+                    value: option,
+                    groupValue: _answers[index],
+                    onChanged: (value) {
+                      setState(() {
+                        _answers[index] = value;
+                      });
+                    },
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildAnswersView() {
-    return ListView.builder(
-      itemCount: widget.examQuestions.length,
-      itemBuilder: (context, index) {
-        final question = widget.examQuestions[index];
-        final userAnswer = _answers[index];
-        final correctAnswer = question.examanswer;
+  return ListView.builder(
+    itemCount: widget.examQuestions.length,
+    itemBuilder: (context, index) {
+      final question = widget.examQuestions[index];
+      final userAnswer = _answers[index];
+      final correctAnswer = question.examanswer;
 
-        return Card(
-          margin: EdgeInsets.symmetric(vertical: 10),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  question.examquestion ?? '',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      return Card(
+        margin: EdgeInsets.symmetric(vertical: 10),
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                question.examquestion ?? '',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black, // Changed to black
                 ),
-                SizedBox(height: 10),
-                Text(
-                  'Your answer: ${userAnswer ?? 'No answer provided'}',
-                  style: TextStyle(
-                      color: userAnswer == correctAnswer
-                          ? Colors.green
-                          : Colors.red),
+              ),
+              SizedBox(height: 10),
+              // Null check for examoptions
+              if (question.examoptions != null)
+                Column(
+                  children: question.examoptions!.map((option) {
+                    final isSelected = userAnswer == option;
+                    final isCorrect = correctAnswer == option;
+                    return Container(
+                      margin: EdgeInsets.only(bottom: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(
+                          color: Colors.blue.shade300, // Keep border color unchanged
+                          width: 1,
+                        ),
+                        color: _showAnswers
+                            ? (isCorrect
+                                ? Colors.green.shade100
+                                : isSelected
+                                    ? Colors.red.shade100
+                                    : Colors.white)
+                            : Colors.white,
+                      ),
+                      child: ListTile(
+                        title: Row(
+                          children: [
+                            Expanded(child: Text(option)),
+                            if (_showAnswers && isSelected)
+                              Icon(
+                                isCorrect ? Icons.check : Icons.close,
+                                color: isCorrect ? Colors.green : Colors.red,
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
                 ),
-                Text(
-                  'Correct answer: $correctAnswer',
-                  style: TextStyle(color: Colors.blue),
-                ),
-              ],
-            ),
+            ],
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
+
 
   void _submitExam() async {
     if (_answers.length != widget.examQuestions.length) {
-    
       showDialog(
         context: context,
         builder: (context) {
@@ -206,54 +289,46 @@ class _ExamScreenState extends State<ExamScreen> {
 
     String uid = currentUser.uid;
     DocumentReference progressDocRef =
-        FirebaseFirestore.instance.collection('user_lesson_progress').doc(uid);
+        FirebaseFirestore.instance.collection('module1_progress').doc(uid);
 
     DocumentSnapshot progressSnapshot = await progressDocRef.get();
 
-    
     Map<String, dynamic> updates = {};
 
     if (progressSnapshot.exists) {
       int currentExamScore = progressSnapshot['ExamScore'] ?? 0;
       bool currentExamComplete = progressSnapshot['ExamComplete'] ?? false;
 
-      
-      print("Current Exam Score: $currentExamScore");
-      print("Current Exam Complete: $currentExamComplete");
-
       if (score > currentExamScore) {
         updates['ExamScore'] = score;
       }
 
-      
-      if (score >= 20) { 
+      if (score >= 20) {
         if (!currentExamComplete) {
           updates['ExamComplete'] = true;
-          print("Setting ExamComplete to true");
         }
       }
     } else {
-      
       updates = {
         'ExamScore': score,
-        'ExamComplete': score >= 20, 
+        'ExamComplete': score >= 20,
       };
-
-      print("Creating new document with initial values");
     }
 
-    
     if (updates.isNotEmpty) {
       try {
         await progressDocRef.update(updates);
-        print("Document updated with: $updates");
-
-        await Future.delayed(Duration(seconds: 1));
-        DocumentSnapshot refreshedSnapshot = await progressDocRef.get();
-        print("Refreshed Document Data: ${refreshedSnapshot.data()}");
       } catch (e) {
         print("Error updating document: $e");
       }
     }
+  }
+
+  void _closeExam() {
+    Navigator.pop(context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ModuleHomeScreen()),
+    );
   }
 }

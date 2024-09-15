@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:modules/Modules/Module1/IdeationScreen.dart';
+import 'package:modules/Modules/Module2/BusinessPlanScreen.dart';
+import 'package:modules/Modules/Module3/BrandingNamingScreen.dart';
+import 'package:modules/Modules/Module4/SelectingLocationScreen.dart';
+import 'package:modules/Modules/Module5/RegLicScreen.dart';
 
 class ModuleHomeScreen extends StatelessWidget {
   const ModuleHomeScreen({super.key});
@@ -39,7 +43,7 @@ class ModuleHomeScreen extends StatelessWidget {
                   _buildModuleCard(
                     context,
                     'Module 2: Business Plan Development',
-                    null, 
+                    const BusinessPlanScreen(), 
                     Icons.business, 
                     Colors.blue, 
                   ),
@@ -47,7 +51,7 @@ class ModuleHomeScreen extends StatelessWidget {
                   _buildModuleCard(
                     context,
                     'Module 3: Branding and Naming',
-                    null, 
+                    BrandingNamingScreen(), 
                     Icons.branding_watermark,
                     Colors.red, 
                   ),
@@ -55,7 +59,7 @@ class ModuleHomeScreen extends StatelessWidget {
                   _buildModuleCard(
                     context,
                     'Module 4: Selecting Location',
-                    null, 
+                    SelectingLocationScreen(), 
                     Icons.location_on, 
                     Colors.green, 
                   ),
@@ -63,7 +67,7 @@ class ModuleHomeScreen extends StatelessWidget {
                   _buildModuleCard(
                     context,
                     'Module 5: Registration and Licensing',
-                    null, 
+                    RegistrationLicensingScreen(), 
                     Icons.assignment, 
                     Colors.purple,
                   ),

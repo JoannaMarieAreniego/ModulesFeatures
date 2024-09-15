@@ -22,46 +22,19 @@ class _QuizScreenState extends State<QuizScreen4> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Quiz'),
+        backgroundColor: Colors.blueAccent,
+        iconTheme: IconThemeData(color: Colors.white),
+        title: Text('Lesson 4 Quiz'),
+        titleTextStyle: TextStyle(color: Colors.white, fontSize: 24),
       ),
-      body: Padding(
+      body: Container(
         padding: const EdgeInsets.all(16.0),
         child: _score == null
             ? ListView.builder(
                 itemCount: widget.quizQuestions.length,
                 itemBuilder: (context, index) {
                   final question = widget.quizQuestions[index];
-                  return Card(
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            question.question,
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 10),
-                          if (question.options != null) ...[
-                            ...question.options!.map(
-                              (option) => RadioListTile<String>(
-                                title: Text(option),
-                                value: option,
-                                groupValue: _answers[index],
-                                onChanged: (value) {
-                                  setState(() {
-                                    _answers[index] = value;
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  );
+                  return _buildQuestionCard(index, question);
                 },
               )
             : _buildAnswersView(),
@@ -69,16 +42,90 @@ class _QuizScreenState extends State<QuizScreen4> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
-          onPressed: _score == null 
-          ? _submitQuiz 
-          : () {
-              Navigator.pop(context); // Close the quiz screen
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ModuleHomeScreen()),
-              ); // Navigate to ModuleHomeScreen
-            },
-          child: Text(_score == null ? 'Submit' : 'Close'),
+          onPressed: _score == null ? _submitQuiz : _closeQuiz,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blueAccent,
+          ),
+          child: Text(
+            _score == null ? 'Submit' : 'Close',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuestionCard(int index, QuizQuestion question) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      elevation: 3,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Question ${index + 1}/${widget.quizQuestions.length}',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue.shade700,
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              question.question,
+              style: TextStyle(fontSize: 18),
+            ),
+            SizedBox(height: 15),
+            Column(
+              children: question.options!.map((option) {
+                final isSelected = _answers[index] == option;
+                final isCorrect = question.answer == option;
+                return Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(
+                      color:
+                          Colors.blue.shade300, // Keep border color consistent
+                      width: 1,
+                    ),
+                    color: _showAnswers
+                        ? (isCorrect
+                            ? Colors.green.shade100
+                            : isSelected
+                                ? Colors.red.shade100
+                                : Colors.white)
+                        : Colors.white,
+                  ),
+                  child: RadioListTile<String>(
+                    activeColor: Colors.blue,
+                    title: Row(
+                      children: [
+                        Expanded(child: Text(option)),
+                        if (_showAnswers && isSelected)
+                          Icon(
+                            isCorrect ? Icons.check : Icons.close,
+                            color: isCorrect ? Colors.green : Colors.red,
+                          ),
+                      ],
+                    ),
+                    value: option,
+                    groupValue: _answers[index],
+                    onChanged: (value) {
+                      setState(() {
+                        _answers[index] = value;
+                      });
+                    },
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
         ),
       ),
     );
@@ -94,6 +141,10 @@ class _QuizScreenState extends State<QuizScreen4> {
 
         return Card(
           margin: EdgeInsets.symmetric(vertical: 10),
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -101,19 +152,48 @@ class _QuizScreenState extends State<QuizScreen4> {
               children: [
                 Text(
                   question.question,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black, // Changed to black
+                  ),
                 ),
                 SizedBox(height: 10),
-                Text(
-                  'Your answer: ${userAnswer ?? 'No answer provided'}',
-                  style: TextStyle(
-                      color: userAnswer == correctAnswer
-                          ? Colors.green
-                          : Colors.red),
-                ),
-                Text(
-                  'Correct answer: $correctAnswer',
-                  style: TextStyle(color: Colors.blue),
+                Column(
+                  children: question.options!.map((option) {
+                    final isSelected = userAnswer == option;
+                    final isCorrect = correctAnswer == option;
+                    return Container(
+                      margin: EdgeInsets.only(bottom: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(
+                          color: Colors
+                              .blue.shade300, // Keep border color unchanged
+                          width: 1,
+                        ),
+                        color: _showAnswers
+                            ? (isCorrect
+                                ? Colors.green.shade100
+                                : isSelected
+                                    ? Colors.red.shade100
+                                    : Colors.white)
+                            : Colors.white,
+                      ),
+                      child: ListTile(
+                        title: Row(
+                          children: [
+                            Expanded(child: Text(option)),
+                            if (_showAnswers && isSelected)
+                              Icon(
+                                isCorrect ? Icons.check : Icons.close,
+                                color: isCorrect ? Colors.green : Colors.red,
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
                 ),
               ],
             ),
@@ -123,21 +203,54 @@ class _QuizScreenState extends State<QuizScreen4> {
     );
   }
 
+  void _closeQuiz() {
+    Navigator.pop(context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ModuleHomeScreen()),
+    );
+  }
+
   void _submitQuiz() async {
     if (_answers.length != widget.quizQuestions.length) {
-      // If not all questions have been answered
       showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Error'),
-            content: Text('Please answer all questions before submitting.'),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            backgroundColor: Colors.white,
+            title: Text(
+              'Incomplete Submission',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.blueAccent,
+              ),
+            ),
+            content: Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Text(
+                'Please ensure all questions are answered before submitting.',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('OK'),
+                child: Text(
+                  'Got it',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.blueAccent,
+                  ),
+                ),
               ),
             ],
           );
@@ -162,13 +275,36 @@ class _QuizScreenState extends State<QuizScreen4> {
 
     await _updateUserProgress(score); // Call the method to update progress
 
+    _showScoreDialog(); // Call the method to show the score dialog
+  }
+
+  void _showScoreDialog() {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Quiz Result'),
-          content: Text(
-              'Your score is $_score out of ${widget.quizQuestions.length}'),
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: const Text(
+            'Quiz Result',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.blueAccent,
+            ),
+          ),
+          content: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Text(
+              'Your score is $_score out of ${widget.quizQuestions.length}',
+              style: const TextStyle(
+                fontSize: 18,
+                color: Colors.black87,
+              ),
+            ),
+          ),
           actions: [
             TextButton(
               onPressed: () {
@@ -177,7 +313,13 @@ class _QuizScreenState extends State<QuizScreen4> {
                   _showAnswers = true;
                 });
               },
-              child: Text('View Answers'),
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+              ),
+              child: const Text(
+                'View Answers',
+                style: TextStyle(fontSize: 16),
+              ),
             ),
             TextButton(
               onPressed: () {
@@ -187,7 +329,13 @@ class _QuizScreenState extends State<QuizScreen4> {
                   MaterialPageRoute(builder: (context) => ModuleHomeScreen()),
                 );
               },
-              child: Text('Close'),
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+              ),
+              child: const Text(
+                'Close',
+                style: TextStyle(fontSize: 16),
+              ),
             ),
           ],
         );
@@ -205,7 +353,7 @@ class _QuizScreenState extends State<QuizScreen4> {
 
     String uid = currentUser.uid;
     DocumentReference progressDocRef =
-        FirebaseFirestore.instance.collection('user_lesson_progress').doc(uid);
+        FirebaseFirestore.instance.collection('module1_progress').doc(uid);
 
     DocumentSnapshot progressSnapshot = await progressDocRef.get();
 
@@ -234,7 +382,8 @@ class _QuizScreenState extends State<QuizScreen4> {
       }
 
       // Update 2Start based on 1Complete and score
-      bool shouldSet5Start = progressSnapshot['4Complete'] == true && score >= 8;
+      bool shouldSet5Start =
+          progressSnapshot['4Complete'] == true && score >= 8;
       if (shouldSet5Start) {
         updates['5Start'] = true;
         print("Setting 5Start to true");
@@ -261,8 +410,7 @@ class _QuizScreenState extends State<QuizScreen4> {
         await progressDocRef.update(updates);
         print("Document updated with: $updates");
 
-        await Future.delayed(
-            Duration(seconds: 1));
+        await Future.delayed(Duration(seconds: 1));
         DocumentSnapshot refreshedSnapshot = await progressDocRef.get();
         print("Refreshed Document Data: ${refreshedSnapshot.data()}");
       } catch (e) {

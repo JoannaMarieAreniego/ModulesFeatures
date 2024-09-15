@@ -39,9 +39,8 @@ class _IdeationScreenState extends State<IdeationScreen> {
       }
 
       String uid = currentUser.uid;
-      DocumentReference progressDocRef = FirebaseFirestore.instance
-          .collection('user_lesson_progress')
-          .doc(uid);
+      DocumentReference progressDocRef =
+          FirebaseFirestore.instance.collection('module1_progress').doc(uid);
 
       DocumentSnapshot progressSnapshot = await progressDocRef.get();
 
@@ -118,7 +117,7 @@ class _IdeationScreenState extends State<IdeationScreen> {
         lesson3Unlocked = lesson3Start;
         lesson4Unlocked = lesson4Start;
         lesson5Unlocked = lesson5Start;
-        examStarted = examStart; 
+        examStarted = examStart;
       });
 
       print("Progress data fetched and UI updated.");
@@ -141,7 +140,7 @@ class _IdeationScreenState extends State<IdeationScreen> {
             children: [
               Center(
                 child: Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
                       colors: [Colors.blueAccent, Colors.purpleAccent],
@@ -149,54 +148,56 @@ class _IdeationScreenState extends State<IdeationScreen> {
                       end: Alignment.bottomRight,
                     ),
                   ),
-                  padding: EdgeInsets.all(20), 
-                  child: Icon(
+                  padding: EdgeInsets.all(20),
+                  child: const Icon(
                     Icons.lightbulb_outline,
                     size: 100,
                     color: Colors.white,
                   ),
                 ),
               ),
-              SizedBox(height: 20),
-
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 'Idea Generation & Evaluation',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 10),
-             
-              
-              Text(
-                'This module consists of several lessons to help you understand how to generate and evaluate business ideas. '
+              const SizedBox(height: 10),
+              const Text(
+                '    In this module: This module consists of several lessons to help you understand how to generate and evaluate business ideas. '
                 'Complete each lesson before proceeding to the Q&A section at the end.',
                 style: TextStyle(
                   fontSize: 16,
                 ),
+                textAlign: TextAlign.justify,
               ),
               SizedBox(height: 20),
-              
-              _buildLessonButton(context, 'Lesson 1: Brainstorming Techniques', () {
+
+              _buildLessonButton(context, 'Lesson 1: Brainstorming Techniques',
+                  () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Lesson1Screen()),
                 );
               }, true),
-              _buildLessonButton(context, 'Lesson 2: Identifying Opportunities', () {
+              _buildLessonButton(context, 'Lesson 2: Identifying Opportunities',
+                  () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Lesson2Screen()),
                 );
               }, lesson2Unlocked),
-              _buildLessonButton(context, 'Lesson 3: Feasibility Assessment', () {
+              _buildLessonButton(context, 'Lesson 3: Feasibility Assessment',
+                  () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Lesson3Screen()),
                 );
               }, lesson3Unlocked),
-              _buildLessonButton(context, 'Lesson 4: Analyzing Market Demand', () {
+              _buildLessonButton(context, 'Lesson 4: Analyzing Market Demand',
+                  () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Lesson4Screen()),
@@ -212,24 +213,38 @@ class _IdeationScreenState extends State<IdeationScreen> {
               // Exam Button
               Center(
                 child: ElevatedButton(
-                  onPressed: examStarted ? () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ExamScreen(
-                          examQuestions: examQuestions,
-                        ),
-                      ),
-                    );
-                  } : null, 
+                  onPressed: examStarted
+                      ? () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ExamScreen(
+                                examQuestions: examQuestions,
+                              ),
+                            ),
+                          );
+                        }
+                      : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: examStarted ? Colors.purple : Colors.grey,
+                    backgroundColor: examStarted
+                        ? Colors.purple
+                        : Colors.grey, // Purple when unlocked, grey when locked
                     padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                    textStyle: TextStyle(fontSize: 18),
+                    textStyle: TextStyle(
+                      fontSize: 18,
+                    ),
                   ),
-                  child: Text('Start Exam'),
+                  child: Text(
+                    'Start Exam',
+                    style: TextStyle(
+                      color: examStarted
+                          ? Colors.white
+                          : Colors
+                              .grey, // White text on purple, grey on disabled
+                    ),
+                  ),
                 ),
-              ),
+              )
             ],
           ),
         ),
@@ -237,34 +252,41 @@ class _IdeationScreenState extends State<IdeationScreen> {
     );
   }
 
-  Widget _buildLessonButton(BuildContext context, String lessonTitle, VoidCallback? onTap, bool isUnlocked) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 10.0),
-    child: ElevatedButton(
-      onPressed: isUnlocked ? onTap : null,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white, 
-        padding: EdgeInsets.symmetric(vertical: 30, horizontal: 30),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        textStyle: TextStyle(fontSize: 18, color: isUnlocked ? Colors.black : Colors.grey), 
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            lessonTitle,
-            style: TextStyle(color: isUnlocked ? Colors.black : Colors.grey), 
+  Widget _buildLessonButton(BuildContext context, String lessonTitle,
+      VoidCallback? onTap, bool isUnlocked) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: OutlinedButton(
+        onPressed: isUnlocked ? onTap : null,
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(
+            color: isUnlocked
+                ? Colors.purple
+                : Colors.grey,
+            width: 0.5,
           ),
-          if (!isUnlocked)
-            Icon(
-              Icons.lock,
-              color: Colors.grey, 
+          padding: EdgeInsets.symmetric(vertical: 30, horizontal: 30),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          textStyle: TextStyle(
+              fontSize: 18, color: isUnlocked ? Colors.black : Colors.grey),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              lessonTitle,
+              style: TextStyle(color: isUnlocked ? Colors.black : Colors.grey),
             ),
-        ],
+            if (!isUnlocked)
+              Icon(
+                Icons.lock,
+                color: Colors.grey,
+              ),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
