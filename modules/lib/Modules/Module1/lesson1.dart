@@ -1,4 +1,3 @@
-// Module1/lesson1.dart
 import 'package:flutter/material.dart';
 import 'package:modules/Modules/Model/mod1les1.dart';
 import 'package:modules/Modules/Module1/lesson1Quiz.dart';
@@ -12,7 +11,12 @@ class Lesson1Screen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(lesson.title),
+        title: Center( 
+          child: Text(
+            lesson.title,
+            style: TextStyles.appBarTitle, 
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -20,25 +24,62 @@ class Lesson1Screen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                lesson.title,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              Center(
+                child: Container(
+                  padding: EdgeInsets.all(10.0),
+                  decoration: BoxDecoration(
+                    color: Colors.blueAccent, 
+                    borderRadius: BorderRadius.circular(10), 
+                  ),
+                  child: Text(
+                    lesson.title,
+                    style: TextStyles.title, 
+                  ),
+                ),
               ),
               SizedBox(height: 20),
-              _buildContentText(lesson.content),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => QuizScreen(
-                        quizQuestions: lesson.quizQuestions,
-                      ),
+              Container(
+                padding: EdgeInsets.all(16.0), // Add padding inside the container
+                decoration: BoxDecoration(
+                  color: Colors.white, // Background color of the content container
+                  borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1), // Shadow color
+                      blurRadius: 5, // Shadow blur radius
+                      offset: Offset(0, 2), // Shadow offset
                     ),
-                  );
-                },
-                child: Text('Take Quiz'),
+                  ],
+                ),
+                child: _buildContentText(lesson.content),
+              ),
+              SizedBox(height: 20),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => QuizScreen(
+                          quizQuestions: lesson.quizQuestions,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Text('Take Quiz',
+                  style: TextStyle(
+                    color: Colors.white
+                  ),),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                    backgroundColor: Colors.blueAccent, 
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8), 
+                    ),
+                    textStyle: TextStyle(fontSize: 16,
+                   ), 
+                  ),
+                ),
               ),
             ],
           ),
@@ -57,7 +98,7 @@ class Lesson1Screen extends StatelessWidget {
         if (i % 2 == 1) {
           spans.add(TextSpan(
             text: parts[i],
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyles.boldContent,
           ));
         } else {
           spans.add(TextSpan(text: parts[i]));
@@ -69,8 +110,15 @@ class Lesson1Screen extends StatelessWidget {
     return RichText(
       text: TextSpan(
         children: spans,
-        style: TextStyle(fontSize: 16, color: Colors.black),
+        style: TextStyles.content,
       ),
     );
   }
+}
+
+class TextStyles {
+  static const appBarTitle = TextStyle(fontSize: 20, fontWeight: FontWeight.bold); // Emphasize appBar title
+  static const title = TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white); // Text color set to white for contrast
+  static const content = TextStyle(fontSize: 16, color: Colors.black);
+  static const boldContent = TextStyle(fontWeight: FontWeight.bold);
 }

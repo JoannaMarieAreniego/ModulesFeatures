@@ -1,4 +1,3 @@
-//moduleHome.dart
 import 'package:flutter/material.dart';
 import 'package:modules/Modules/Module1/IdeationScreen.dart';
 
@@ -11,64 +10,127 @@ class ModuleHomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Educational Modules'),
       ),
-      body: ListView(
-        padding: EdgeInsets.all(16.0),
-        children: [
-          _buildModuleCard(
-            context,
-            'Module 1: Idea Generation and Evaluation',
-            'Learn how to come up with and evaluate business ideas.',
-            const IdeationScreen(), // Navigate to IdeationScreen
-          ),
-          _buildModuleCard(
-            context,
-            'Module 2: Business Plan Development',
-            'Create a solid business plan for your idea.',
-            null, // Placeholder for future BusinessPlanScreen
-          ),
-          _buildModuleCard(
-            context,
-            'Module 3: Branding and Naming',
-            'Develop a strong brand and choose a name.',
-            null, // Placeholder for future screen
-          ),
-          _buildModuleCard(
-            context,
-            'Module 4: Selecting Location',
-            'Find the best location for your business.',
-            null, // Placeholder for future screen
-          ),
-          _buildModuleCard(
-            context,
-            'Module 5: Registration and Licensing',
-            'Understand the legal aspects of starting a business.',
-            null, // Placeholder for future screen
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 25),
+                child: Image.asset(
+                  'assets/images/moduleback.png',
+                  width: double.infinity,
+                  height: 200,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                children: [
+                  _buildModuleCard(
+                    context,
+                    'Module 1: Idea Generation and Evaluation',
+                    const IdeationScreen(),
+                    Icons.lightbulb_outline,
+                    Colors.orange,
+                  ),
+                  SizedBox(height: 10), 
+                  _buildModuleCard(
+                    context,
+                    'Module 2: Business Plan Development',
+                    null, 
+                    Icons.business, 
+                    Colors.blue, 
+                  ),
+                  SizedBox(height: 10), 
+                  _buildModuleCard(
+                    context,
+                    'Module 3: Branding and Naming',
+                    null, 
+                    Icons.branding_watermark,
+                    Colors.red, 
+                  ),
+                  SizedBox(height: 10), 
+                  _buildModuleCard(
+                    context,
+                    'Module 4: Selecting Location',
+                    null, 
+                    Icons.location_on, 
+                    Colors.green, 
+                  ),
+                  SizedBox(height: 10), 
+                  _buildModuleCard(
+                    context,
+                    'Module 5: Registration and Licensing',
+                    null, 
+                    Icons.assignment, 
+                    Colors.purple,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildModuleCard(BuildContext context, String title, String description, Widget? screen) {
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      child: ListTile(
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(description),
-        trailing: const Icon(Icons.arrow_forward),
+  Widget _buildModuleCard(BuildContext context, String title, Widget? screen, IconData icon, Color iconColor) {
+    return Material(
+      elevation: 2.0,
+      borderRadius: BorderRadius.circular(8.0),
+      child: InkWell(
         onTap: () {
           if (screen != null) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => screen), // Navigate using MaterialPageRoute
+              MaterialPageRoute(builder: (context) => screen),
             );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('This module is not available yet.')),
+              SnackBar(content: Text('$title is not available yet.')),
             );
           }
         },
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: iconColor.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Icon(icon, color: iconColor, size: 30),
+                ),
+                SizedBox(width: 15),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

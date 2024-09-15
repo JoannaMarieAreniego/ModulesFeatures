@@ -118,7 +118,7 @@ class _IdeationScreenState extends State<IdeationScreen> {
         lesson3Unlocked = lesson3Start;
         lesson4Unlocked = lesson4Start;
         lesson5Unlocked = lesson5Start;
-        examStarted = examStart; // Changed from examUnlocked to examStarted
+        examStarted = examStart; 
       });
 
       print("Progress data fetched and UI updated.");
@@ -133,81 +133,138 @@ class _IdeationScreenState extends State<IdeationScreen> {
       appBar: AppBar(
         title: Text('Module 1: Idea Generation and Evaluation'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Idea Generation and Evaluation',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'This module consists of several lessons to help you understand how to generate and evaluate business ideas. '
-              'Complete each lesson before proceeding to the Q&A section at the end.',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 20),
-            _buildLessonButton(context, 'Lesson 1: Brainstorming Techniques', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Lesson1Screen()),
-              );
-            }, true),
-            _buildLessonButton(context, 'Lesson 2: Identifying Opportunities', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Lesson2Screen()),
-              );
-            }, lesson2Unlocked),
-            _buildLessonButton(context, 'Lesson 3: Feasibility Assessment', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Lesson3Screen()),
-              );
-            }, lesson3Unlocked),
-            _buildLessonButton(context, 'Lesson 4: Analyzing Market Demand', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Lesson4Screen()),
-              );
-            }, lesson4Unlocked),
-            _buildLessonButton(context, 'Lesson 5: Competitor Analysis', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Lesson5Screen()),
-              );
-            }, lesson5Unlocked),
-            ElevatedButton(
-              onPressed: examStarted ? () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ExamScreen(
-                      examQuestions: examQuestions,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [Colors.blueAccent, Colors.purpleAccent],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
                   ),
+                  padding: EdgeInsets.all(20), 
+                  child: Icon(
+                    Icons.lightbulb_outline,
+                    size: 100,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+
+              Text(
+                'Idea Generation & Evaluation',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 10),
+             
+              
+              Text(
+                'This module consists of several lessons to help you understand how to generate and evaluate business ideas. '
+                'Complete each lesson before proceeding to the Q&A section at the end.',
+                style: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+              SizedBox(height: 20),
+              
+              _buildLessonButton(context, 'Lesson 1: Brainstorming Techniques', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Lesson1Screen()),
                 );
-              } : null, 
-              child: Text('Exam'),
-            ),
-          ],
+              }, true),
+              _buildLessonButton(context, 'Lesson 2: Identifying Opportunities', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Lesson2Screen()),
+                );
+              }, lesson2Unlocked),
+              _buildLessonButton(context, 'Lesson 3: Feasibility Assessment', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Lesson3Screen()),
+                );
+              }, lesson3Unlocked),
+              _buildLessonButton(context, 'Lesson 4: Analyzing Market Demand', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Lesson4Screen()),
+                );
+              }, lesson4Unlocked),
+              _buildLessonButton(context, 'Lesson 5: Competitor Analysis', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Lesson5Screen()),
+                );
+              }, lesson5Unlocked),
+              SizedBox(height: 20),
+              // Exam Button
+              Center(
+                child: ElevatedButton(
+                  onPressed: examStarted ? () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ExamScreen(
+                          examQuestions: examQuestions,
+                        ),
+                      ),
+                    );
+                  } : null, 
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: examStarted ? Colors.purple : Colors.grey,
+                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                    textStyle: TextStyle(fontSize: 18),
+                  ),
+                  child: Text('Start Exam'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildLessonButton(BuildContext context, String lessonTitle, VoidCallback? onTap, bool isUnlocked) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: ElevatedButton(
-        onPressed: isUnlocked ? onTap : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isUnlocked ? Colors.blue : Colors.grey,
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 10.0),
+    child: ElevatedButton(
+      onPressed: isUnlocked ? onTap : null,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white, // Set background color to white
+        padding: EdgeInsets.symmetric(vertical: 30, horizontal: 30), // Set padding for the button
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15), // Set border radius here
         ),
-        child: Text(lessonTitle),
+        textStyle: TextStyle(fontSize: 18, color: isUnlocked ? Colors.black : Colors.grey), // Set text color
       ),
-    );
-  }
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            lessonTitle,
+            style: TextStyle(color: isUnlocked ? Colors.black : Colors.grey), // Set text color based on locked state
+          ),
+          if (!isUnlocked)
+            Icon(
+              Icons.lock,
+              color: Colors.grey, // Set lock icon color to grey
+            ),
+        ],
+      ),
+    ),
+  );
+}
 }
