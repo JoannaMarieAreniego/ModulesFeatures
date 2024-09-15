@@ -73,11 +73,11 @@ class _ExamScreenState extends State<ExamScreen> {
           onPressed: _score == null
               ? _submitExam
               : () {
-                  Navigator.pop(context); // Close the exam screen
+                  Navigator.pop(context); 
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => ModuleHomeScreen()),
-                  ); // Navigate to ModuleHomeScreen
+                  ); 
                 },
           child: Text(_score == null ? 'Submit' : 'Close'),
         ),
@@ -126,7 +126,7 @@ class _ExamScreenState extends State<ExamScreen> {
 
   void _submitExam() async {
     if (_answers.length != widget.examQuestions.length) {
-      // If not all questions have been answered
+    
       showDialog(
         context: context,
         builder: (context) {
@@ -210,40 +210,39 @@ class _ExamScreenState extends State<ExamScreen> {
 
     DocumentSnapshot progressSnapshot = await progressDocRef.get();
 
-    // Create a map for updates
+    
     Map<String, dynamic> updates = {};
 
     if (progressSnapshot.exists) {
       int currentExamScore = progressSnapshot['ExamScore'] ?? 0;
       bool currentExamComplete = progressSnapshot['ExamComplete'] ?? false;
 
-      // Debugging prints
+      
       print("Current Exam Score: $currentExamScore");
       print("Current Exam Complete: $currentExamComplete");
 
-      // Update score if it's higher
       if (score > currentExamScore) {
         updates['ExamScore'] = score;
       }
 
-      // Ensure ExamComplete is set correctly
-      if (score >= 20) { // Assuming passing score is 20
+      
+      if (score >= 20) { 
         if (!currentExamComplete) {
           updates['ExamComplete'] = true;
           print("Setting ExamComplete to true");
         }
       }
     } else {
-      // Document does not exist, create with initial values
+      
       updates = {
         'ExamScore': score,
-        'ExamComplete': score >= 20, // Assuming passing score is 20
+        'ExamComplete': score >= 20, 
       };
 
       print("Creating new document with initial values");
     }
 
-    // Apply updates
+    
     if (updates.isNotEmpty) {
       try {
         await progressDocRef.update(updates);

@@ -243,24 +243,24 @@ class _IdeationScreenState extends State<IdeationScreen> {
     child: ElevatedButton(
       onPressed: isUnlocked ? onTap : null,
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white, // Set background color to white
-        padding: EdgeInsets.symmetric(vertical: 30, horizontal: 30), // Set padding for the button
+        backgroundColor: Colors.white, 
+        padding: EdgeInsets.symmetric(vertical: 30, horizontal: 30),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15), // Set border radius here
+          borderRadius: BorderRadius.circular(15),
         ),
-        textStyle: TextStyle(fontSize: 18, color: isUnlocked ? Colors.black : Colors.grey), // Set text color
+        textStyle: TextStyle(fontSize: 18, color: isUnlocked ? Colors.black : Colors.grey), 
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             lessonTitle,
-            style: TextStyle(color: isUnlocked ? Colors.black : Colors.grey), // Set text color based on locked state
+            style: TextStyle(color: isUnlocked ? Colors.black : Colors.grey), 
           ),
           if (!isUnlocked)
             Icon(
               Icons.lock,
-              color: Colors.grey, // Set lock icon color to grey
+              color: Colors.grey, 
             ),
         ],
       ),

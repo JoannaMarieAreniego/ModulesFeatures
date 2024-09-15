@@ -39,15 +39,15 @@ class Lesson1Screen extends StatelessWidget {
               ),
               SizedBox(height: 20),
               Container(
-                padding: EdgeInsets.all(16.0), // Add padding inside the container
+                padding: EdgeInsets.all(16.0), 
                 decoration: BoxDecoration(
-                  color: Colors.white, // Background color of the content container
-                  borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                  color: Colors.white, 
+                  borderRadius: BorderRadius.circular(8.0),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1), // Shadow color
-                      blurRadius: 5, // Shadow blur radius
-                      offset: Offset(0, 2), // Shadow offset
+                      color: Colors.black.withOpacity(0.1), 
+                      blurRadius: 5, 
+                      offset: Offset(0, 2), 
                     ),
                   ],
                 ),
@@ -117,8 +117,8 @@ class Lesson1Screen extends StatelessWidget {
 }
 
 class TextStyles {
-  static const appBarTitle = TextStyle(fontSize: 20, fontWeight: FontWeight.bold); // Emphasize appBar title
-  static const title = TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white); // Text color set to white for contrast
+  static const appBarTitle = TextStyle(fontSize: 20, fontWeight: FontWeight.bold); 
+  static const title = TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white); 
   static const content = TextStyle(fontSize: 16, color: Colors.black);
   static const boldContent = TextStyle(fontWeight: FontWeight.bold);
 }
